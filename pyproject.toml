@@ -7,4 +7,4 @@ requires-python = ">=3.13"
 dependencies = ["mcp>=1.2.1"]
 
 [project.scripts]
-mcp-applemusic = "server:main"
+mcp-applemusic = "mcp_applemusic:main"
