@@ -88,12 +88,16 @@ def itunes_create_playlist(name: str, songs: str) -> str:
     song_list = [s.strip() for s in songs.split(",") if s.strip()]
     if not song_list:
         return "No songs provided."
-    # Build a condition string, e.g.: 'name is "song1" or name is "song2"'
+    # Build a condition string that matches any one of the song names.
+    # Example: 'name is "Song1" or name is "Song2"'
     conditions = " or ".join([f'name is "{s}"' for s in song_list])
     script = f"""
     tell application "Music"
         set newPlaylist to make new user playlist with properties {{name:"{name}"}}
-        duplicate (every track of playlist "Library" whose ({conditions})) to newPlaylist
+        set matchingTracks to every track of playlist "Library" whose ({conditions})
+        repeat with t in matchingTracks
+            duplicate t to newPlaylist
+        end repeat
         return "Playlist \\"{name}\\" created with " & (count of tracks of newPlaylist) & " tracks."
     end tell
     """
