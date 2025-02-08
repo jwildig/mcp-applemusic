@@ -1,0 +1,105 @@
+import subprocess
+from mcp.server.fastmcp import FastMCP
+
+def run_applescript(script: str) -> str:
+    """Execute an AppleScript command via osascript and return its output."""
+    result = subprocess.run(["osascript", "-e", script], capture_output=True, text=True)
+    if result.returncode != 0:
+        return f"Error: {result.stderr.strip()}"
+    return result.stdout.strip()
+
+# Instantiate the MCP server.
+mcp = FastMCP("iTunesControlServer")
+
+@mcp.tool()
+def itunes_play() -> str:
+    """Start playback in Music (iTunes)."""
+    script = 'tell application "Music" to play'
+    return run_applescript(script)
+
+@mcp.tool()
+def itunes_pause() -> str:
+    """Pause playback in Music (iTunes)."""
+    script = 'tell application "Music" to pause'
+    return run_applescript(script)
+
+@mcp.tool()
+def itunes_next() -> str:
+    """Skip to the next track."""
+    script = 'tell application "Music" to next track'
+    return run_applescript(script)
+
+@mcp.tool()
+def itunes_previous() -> str:
+    """Return to the previous track."""
+    script = 'tell application "Music" to previous track'
+    return run_applescript(script)
+
+@mcp.tool()
+def itunes_search(query: str) -> str:
+    """
+    Search the Music library for tracks whose names contain the given query.
+    Returns a list of matching tracks in the form "Track Name - Artist".
+    """
+    script = f'''
+    tell application "Music"
+        set trackList to every track of playlist "Library" whose name contains "{query}"
+        set output to ""
+        repeat with t in trackList
+            set output to output & (name of t) & " - " & (artist of t) & linefeed
+        end repeat
+        return output
+    end tell
+    '''
+    return run_applescript(script)
+
+@mcp.tool()
+def itunes_play_song(song: str) -> str:
+    """
+    Play the first track whose name exactly matches the given song name.
+    Returns a confirmation message with the track’s name and artist.
+    """
+    script = f'''
+    tell application "Music"
+        set theTrack to first track of playlist "Library" whose name is "{song}"
+        play theTrack
+        return "Now playing: " & (name of theTrack) & " by " & (artist of theTrack)
+    end tell
+    '''
+    return run_applescript(script)
+
+@mcp.tool()
+def itunes_create_playlist(name: str, songs: str) -> str:
+    """
+    Create a new playlist with the given name and add tracks to it.
+    'songs' should be a comma-separated list of exact track names.
+    Returns a confirmation message with the playlist name and number of tracks added.
+    """
+    # Build an AppleScript list string from the comma-separated song names.
+    song_list = [s.strip() for s in songs.split(",") if s.strip()]
+    song_list_str = "{" + ", ".join(f'"{s}"' for s in song_list) + "}"
+    script = f'''
+    tell application "Music"
+        set newPlaylist to make new user playlist with properties {{name:"{name}"}}
+        duplicate (every track of playlist "Library" whose name is in {song_list_str}) to newPlaylist
+        return "Playlist \\"{name}\\" created with " & (count of tracks of newPlaylist) & " tracks."
+    end tell
+    '''
+    return run_applescript(script)
+
+@mcp.tool()
+def itunes_library() -> str:
+    """
+    Return a summary of the Music library, including the total number of tracks and user playlists.
+    """
+    script = '''
+    tell application "Music"
+        set totalTracks to count of every track of playlist "Library"
+        set totalPlaylists to count of user playlists
+        return "Total tracks: " & totalTracks & linefeed & "Total playlists: " & totalPlaylists
+    end tell
+    '''
+    return run_applescript(script)
+
+if __name__ == "__main__":
+    mcp.run()
