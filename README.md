@@ -10,8 +10,22 @@ A FastMCP server implementation for controlling Apple Music (formerly iTunes) on
 
 ## Installation
 
+First, ensure you have uv installed:
 ```bash
-pip install mcp-applemusic
+$ brew install uv
+```
+
+Then, with **Claude Desktop**, add the following to `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "iTunesControlServer": {
+      "command": "uvx",
+      "args": ["-n", "mcp-applemusic"]
+    }
+  }
+}
 ```
 
 ## Available Commands
