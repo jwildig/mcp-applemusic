@@ -119,6 +119,44 @@ def itunes_library() -> str:
     return run_applescript(script)
 
 
+@mcp.tool()
+def itunes_current_song() -> str:
+    """
+    Get information about the currently playing track.
+    Returns the track name, artist, and album.
+    """
+    script = """
+    tell application "Music"
+        if player state is playing then
+            set currentTrack to current track
+            return "Now playing: " & (name of currentTrack) & " by " & (artist of currentTrack) & " from " & (album of currentTrack)
+        else
+            return "No track is currently playing"
+        end if
+    end tell
+    """
+    return run_applescript(script)
+
+
+@mcp.tool()
+def itunes_all_songs() -> str:
+    """
+    Get a list of all songs in the Music library.
+    Returns a formatted list of all tracks with their names and artists.
+    """
+    script = """
+    tell application "Music"
+        set trackList to every track of playlist "Library"
+        set output to ""
+        repeat with t in trackList
+            set output to output & (name of t) & " - " & (artist of t) & linefeed
+        end repeat
+        return output
+    end tell
+    """
+    return run_applescript(script)
+
+
 def main():
     mcp.run()
 
