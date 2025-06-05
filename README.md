@@ -40,7 +40,7 @@ itunes_pause()        # Pause playback
 itunes_next()         # Skip to next track
 itunes_previous()     # Go to previous track
 itunes_search(query)  # Search library for tracks
-itunes_play_song(song)  # Play specific song
+itunes_play_song(song, artist)  # Play specific song
 itunes_create_playlist(name, songs)  # Create new playlist
 itunes_library()      # Get library statistics
 ```
@@ -63,7 +63,7 @@ results = itunes_search("Hey Jude")
 itunes_create_playlist("Beatles Favorites", ["Yesterday", "Hey Jude", "Let It Be"])
 
 # Play a specific song
-itunes_play_song("Hey Jude")
+itunes_play_song("Hey Jude", "The Beatles")
 ```
 
 ## Development
