@@ -105,21 +105,6 @@ def itunes_create_playlist(name: str, songs: str) -> str:
 
 
 @mcp.tool()
-def itunes_library() -> str:
-    """
-    Return a summary of the Music library, including total tracks and user playlists.
-    """
-    script = """
-    tell application "Music"
-        set totalTracks to count of every track of playlist "Library"
-        set totalPlaylists to count of user playlists
-        return "Total tracks: " & totalTracks & linefeed & "Total playlists: " & totalPlaylists
-    end tell
-    """
-    return run_applescript(script)
-
-
-@mcp.tool()
 def itunes_current_song() -> str:
     """
     Get information about the currently playing track.
@@ -136,26 +121,6 @@ def itunes_current_song() -> str:
     end tell
     """
     return run_applescript(script)
-
-
-@mcp.tool()
-def itunes_all_songs() -> str:
-    """
-    Get a list of all songs in the Music library.
-    Returns a formatted list of all tracks with their names and artists.
-    """
-    script = """
-    tell application "Music"
-        set trackList to every track of playlist "Library"
-        set output to ""
-        repeat with t in trackList
-            set output to output & (name of t) & " - " & (artist of t) & linefeed
-        end repeat
-        return output
-    end tell
-    """
-    return run_applescript(script)
-
 
 def main():
     mcp.run()
