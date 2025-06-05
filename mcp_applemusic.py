@@ -62,14 +62,14 @@ def itunes_search(query: str) -> str:
 
 
 @mcp.tool()
-def itunes_play_song(song: str) -> str:
+def itunes_play_song(song: str, artist: str) -> str:
     """
-    Play the first track whose name exactly matches the given song name.
+    Play the first track whose name and artist exactly match the given values.
     Returns a confirmation message.
     """
     script = f"""
     tell application "Music"
-        set theTrack to first track of playlist "Library" whose name is "{song}"
+        set theTrack to first track of playlist "Library" whose name is "{song}" and artist is "{artist}"
         play theTrack
         return "Now playing: " & (name of theTrack) & " by " & (artist of theTrack)
     end tell
